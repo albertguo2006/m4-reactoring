@@ -22,14 +22,17 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        final StringBuilder result = new StringBuilder("Statement for " + invoice.getCustomer() + System.lineSeparator());
+        final String customerHeader = "Statement for " + invoice.getCustomer() + System.lineSeparator();
+        final StringBuilder result = new StringBuilder(customerHeader);
 
         // build lines for each performance
-        for (Performance p : invoice.getPerformances()) {
-            final Play play = getPlay(p);
-            result.append(String.format("  %s: %s (%s seats)%n",
-                    play.getName(), usd(getAmount(p)), p.getAudience()));
-        }
+    for (Performance p : invoice.getPerformances()) {
+        final Play play = getPlay(p);
+        result.append(String.format("  %s: %s (%s seats)%n",
+            play.getName(),
+            usd(getAmount(p)),
+            p.getAudience()));
+    }
 
         final int totalAmount = getTotalAmount();
         final int volumeCredits = getTotalVolumeCredits();
