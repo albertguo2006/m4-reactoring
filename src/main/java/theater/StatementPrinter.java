@@ -22,19 +22,20 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        StringBuilder result = new StringBuilder("Statement for " + invoice.getCustomer() + System.lineSeparator());
+        final StringBuilder result = new StringBuilder("Statement for " + invoice.getCustomer() + System.lineSeparator());
 
         // build lines for each performance
         for (Performance p : invoice.getPerformances()) {
-            Play play = getPlay(p);
+            final Play play = getPlay(p);
             result.append(String.format("  %s: %s (%s seats)%n",
                     play.getName(), usd(getAmount(p)), p.getAudience()));
         }
 
-        int totalAmount = getTotalAmount();
-        int volumeCredits = getTotalVolumeCredits();
+        final int totalAmount = getTotalAmount();
+        final int volumeCredits = getTotalVolumeCredits();
 
-        result.append(String.format("Amount owed is %s%n", usd(totalAmount)));
+        result.append(String.format("Amount owed is %s%n",
+                usd(totalAmount)));
         result.append(String.format("You earned %s credits%n", volumeCredits));
         return result.toString();
     }
@@ -44,7 +45,7 @@ public class StatementPrinter {
     }
 
     private int getAmount(Performance performance) {
-        Play play = getPlay(performance);
+        final Play play = getPlay(performance);
         int result = 0;
         switch (play.getType()) {
             case "tragedy":
@@ -56,9 +57,9 @@ public class StatementPrinter {
             case "comedy":
                 result = Constants.COMEDY_BASE_AMOUNT;
                 if (performance.getAudience() > Constants.COMEDY_AUDIENCE_THRESHOLD) {
-                    result += Constants.COMEDY_OVER_BASE_CAPACITY_AMOUNT
-                            + (Constants.COMEDY_OVER_BASE_CAPACITY_PER_PERSON
-                            * (performance.getAudience() - Constants.COMEDY_AUDIENCE_THRESHOLD));
+                    final int over = Constants.COMEDY_OVER_BASE_CAPACITY_PER_PERSON
+                            * (performance.getAudience() - Constants.COMEDY_AUDIENCE_THRESHOLD);
+                    result += Constants.COMEDY_OVER_BASE_CAPACITY_AMOUNT + over;
                 }
                 result += Constants.COMEDY_AMOUNT_PER_AUDIENCE * performance.getAudience();
                 break;
@@ -69,7 +70,7 @@ public class StatementPrinter {
     }
 
     private int getVolumeCredits(Performance performance) {
-        Play play = getPlay(performance);
+        final Play play = getPlay(performance);
         int result = Math.max(performance.getAudience() - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
         if ("comedy".equals(play.getType())) {
             result += performance.getAudience() / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
